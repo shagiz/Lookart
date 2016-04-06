@@ -2,13 +2,16 @@ package com.shagi.yandex.lookart;
 
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.shagi.yandex.lookart.adaptor.TabAdaptor;
+import com.shagi.yandex.lookart.fragment.SplashFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         preferenceHelper = PreferenceHelper.getInstance();
 
         runSplash();
+        setUI();
     }
 
     @Override
@@ -58,7 +62,42 @@ public class MainActivity extends AppCompatActivity {
         if (!preferenceHelper.getBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE)) {
             SplashFragment splashFragment = new SplashFragment();
             fragmentManager.beginTransaction()
-                    .replace(R.id.containter, splashFragment).addToBackStack(null).commit();
+                    .replace(R.id.content_frame, splashFragment).addToBackStack(null).commit();
         }
+    }
+
+    public void setUI(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null){
+            toolbar.setTitleTextColor(ContextCompat.getColor(getApplicationContext(),R.color.white));
+            setSupportActionBar(toolbar);
+        }
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.artists_tab));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.artists_tab));
+
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        TabAdaptor tabAdaptor = new TabAdaptor(fragmentManager, 2);
+
+        viewPager.setAdapter(tabAdaptor);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 }

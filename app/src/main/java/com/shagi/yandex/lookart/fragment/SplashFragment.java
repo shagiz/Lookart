@@ -1,4 +1,4 @@
-package com.shagi.yandex.lookart;
+package com.shagi.yandex.lookart.fragment;
 
 
 import android.os.AsyncTask;
@@ -7,6 +7,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.shagi.yandex.lookart.R;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +34,7 @@ public class SplashFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_splash, container, false);
     }
 
-    class SplashTask extends AsyncTask<Void, Void, Void>{
+    class SplashTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -41,8 +43,9 @@ public class SplashFragment extends Fragment {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            getActivity().getFragmentManager().popBackStack();
+            if (getActivity() != null) {
+                getActivity().getFragmentManager().popBackStack();
+            }
             return null;
         }
     }
