@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.artists_tab));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.artists_tab));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.selected_artist_tab));
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         TabAdaptor tabAdaptor = new TabAdaptor(fragmentManager, 2);
