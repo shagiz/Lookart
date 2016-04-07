@@ -6,4 +6,6 @@
 
     <color name="white">#FFFFFF</color>
 
+    <color name="colorPrimaryText">#000</color>
+    <color name="colorSecondaryText">#9E9E9E</color>
 </resources>

@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,16 +18,17 @@ public class MainActivity extends AppCompatActivity {
 
     FragmentManager fragmentManager;
     PreferenceHelper preferenceHelper;
+    TabAdaptor tabAdaptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fragmentManager = getFragmentManager();
-
         PreferenceHelper.getInstance().init(getApplicationContext());
         preferenceHelper = PreferenceHelper.getInstance();
+        fragmentManager = getFragmentManager();
+
 
         runSplash();
         setUI();
@@ -66,10 +68,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setUI(){
+    public void setUI() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null){
-            toolbar.setTitleTextColor(ContextCompat.getColor(getApplicationContext(),R.color.white));
+        if (toolbar != null) {
+            toolbar.setTitleTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
             setSupportActionBar(toolbar);
         }
 
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText(R.string.selected_artist_tab));
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        TabAdaptor tabAdaptor = new TabAdaptor(fragmentManager, 2);
+        tabAdaptor = new TabAdaptor(fragmentManager, 2);
 
         viewPager.setAdapter(tabAdaptor);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -99,5 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
     }
+
 }
