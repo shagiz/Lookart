@@ -7,6 +7,7 @@ import android.os.Handler;
 
 
 import com.shagi.yandex.lookart.MainActivity;
+import com.shagi.yandex.lookart.PreferenceHelper;
 import com.shagi.yandex.lookart.R;
 
 /**
@@ -21,18 +22,27 @@ public class SplashActivity extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.fragment_splash);
+
+        PreferenceHelper.getInstance().init(getApplicationContext());
+
+        if (!PreferenceHelper.getInstance().getBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE)) {
+            setContentView(R.layout.fragment_splash);
 
         /* New Handler to start the Menu-Activity
          * and close this Splash-Screen after some seconds.*/
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
                 /* Create an Intent that will start the Menu-Activity. */
-                Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
-                SplashActivity.this.startActivity(mainIntent);
-                SplashActivity.this.finish();
-            }
-        }, SPLASH_DISPLAY_LENGTH);
+                    Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+                    SplashActivity.this.startActivity(mainIntent);
+                    SplashActivity.this.finish();
+                }
+            }, SPLASH_DISPLAY_LENGTH);
+        }else {
+            Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+            SplashActivity.this.startActivity(mainIntent);
+            SplashActivity.this.finish();
+        }
     }
 }

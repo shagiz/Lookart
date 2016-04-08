@@ -24,13 +24,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        PreferenceHelper.getInstance().init(getApplicationContext());
         preferenceHelper = PreferenceHelper.getInstance();
         fragmentManager = getFragmentManager();
 
-
-       // runSplash();
         setUI();
     }
 
@@ -58,17 +54,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void runSplash() {
-        if (!preferenceHelper.getBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE)) {
-            SplashFragment splashFragment = new SplashFragment();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, splashFragment)
-                    .addToBackStack(null)
-                    .commit();
-        }
-
     }
 
     public void setUI() {
