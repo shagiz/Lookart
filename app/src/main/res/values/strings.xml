@@ -7,5 +7,6 @@
     <string name="artists_tab">Исполнители</string>
     <string name="selected_artist_tab">Подробно</string>
     <string name="splash_activity">splash_activity</string>
+    <string name="description">Описание</string>
 
 </resources>

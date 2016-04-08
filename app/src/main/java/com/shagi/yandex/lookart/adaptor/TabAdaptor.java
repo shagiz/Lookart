@@ -4,7 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentStatePagerAdapter;
 
-import com.shagi.yandex.lookart.fragment.ArtistsFragment;
+import com.shagi.yandex.lookart.fragment.RecyclerArtistFragment;
 import com.shagi.yandex.lookart.fragment.SelectedArtistFragment;
 
 /**
@@ -17,13 +17,13 @@ public class TabAdaptor extends FragmentStatePagerAdapter {
     public static final int ARTISTS_FRAGMENT_POSITION = 0;
     public static final int SELECTED_ARTIST_POSITION = 1;
 
-    private ArtistsFragment artistsFragment;
+    private RecyclerArtistFragment artistsFragment;
     private SelectedArtistFragment selectedArtistFragment;
 
     public TabAdaptor(FragmentManager fm, int numberOfTabs) {
         super(fm);
         this.numberOfTabs = numberOfTabs;
-        artistsFragment = new ArtistsFragment();
+        artistsFragment = new RecyclerArtistFragment();
         selectedArtistFragment = new SelectedArtistFragment();
     }
 

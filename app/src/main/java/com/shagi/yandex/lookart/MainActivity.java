@@ -12,13 +12,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.shagi.yandex.lookart.adaptor.TabAdaptor;
-import com.shagi.yandex.lookart.fragment.SplashFragment;
+import com.shagi.yandex.lookart.fragment.ArtistFragment;
+import com.shagi.yandex.lookart.fragment.RecyclerArtistFragment;
+import com.shagi.yandex.lookart.fragment.SelectedArtistFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecyclerArtistFragment.OnArtistSelectedListener{
 
     FragmentManager fragmentManager;
     PreferenceHelper preferenceHelper;
     TabAdaptor tabAdaptor;
+    TabLayout tabLayout;
+
+    ArtistFragment artistFragment;
+    RecyclerArtistFragment recyclerArtistFragment;
+    SelectedArtistFragment selectedArtistFragment;
+
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         setUI();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
         }
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText(R.string.artists_tab));
         tabLayout.addTab(tabLayout.newTab().setText(R.string.selected_artist_tab));
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager = (ViewPager) findViewById(R.id.pager);
         tabAdaptor = new TabAdaptor(fragmentManager, 2);
 
         viewPager.setAdapter(tabAdaptor);
@@ -90,6 +100,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        selectedArtistFragment = (SelectedArtistFragment) tabAdaptor.getItem(TabAdaptor.SELECTED_ARTIST_POSITION);
     }
 
+    @Override
+    public void onArtistSelected(int position, boolean openInfoTab) {
+        tabLayout.getTabAt(1).setText(selectedArtistFragment.getArtists().get(position).getName());
+        selectedArtistFragment.changeInfo(position);
+        if (openInfoTab) {
+            viewPager.setCurrentItem(1);
+        }
+    }
 }

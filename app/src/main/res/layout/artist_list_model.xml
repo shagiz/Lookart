@@ -17,7 +17,7 @@
         />
 
     <TextView
-        android:id="@+id/tvStyle"
+        android:id="@+id/tvListStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
@@ -27,7 +27,7 @@
         android:layout_toRightOf="@id/small_cover"/>
 
     <TextView
-        android:id="@+id/tvAlbums"
+        android:id="@+id/tvListAlbums"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
