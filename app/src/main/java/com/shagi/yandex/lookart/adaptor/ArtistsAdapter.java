@@ -34,7 +34,7 @@ public class ArtistsAdapter extends RecyclerView.Adapter<ArtistsAdapter.ViewHold
         TextView style = (TextView) v.findViewById(R.id.tvStyle);
         TextView albums = (TextView) v.findViewById(R.id.tvAlbums);
 
-        return new ViewHolder(parent, smallCover, name, style, albums);
+        return new ViewHolder(v, smallCover, name, style, albums);
     }
 
     @Override

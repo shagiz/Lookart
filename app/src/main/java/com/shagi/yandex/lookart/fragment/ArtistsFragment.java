@@ -25,10 +25,6 @@ import java.util.concurrent.ExecutionException;
  * A simple {@link Fragment} subclass.
  */
 public class ArtistsFragment extends Fragment {
-
-    private RecyclerView rvArtists;
-    private RecyclerView.LayoutManager layoutManager;
-
     private ArtistsAdapter adapter;
 
     private List<Artist> artists;
@@ -52,6 +48,9 @@ public class ArtistsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        RecyclerView rvArtists;
+        RecyclerView.LayoutManager
+                layoutManager;
         View rootView = inflater.inflate(R.layout.fragment_artists, container, false);
 
         rvArtists = (RecyclerView) rootView.findViewById(R.id.rvArtists);
@@ -60,12 +59,10 @@ public class ArtistsFragment extends Fragment {
 
         rvArtists.setLayoutManager(layoutManager);
         artists = loadArtistModels();
-        Log.d("TEST","До");
+
         adapter = new ArtistsAdapter(artists);
-        Log.d("TEST","После");
 
         rvArtists.setAdapter(adapter);
-        Log.d("TEST", "После setAdapter");
 
         // Inflate the layout for this fragment
         return rootView;

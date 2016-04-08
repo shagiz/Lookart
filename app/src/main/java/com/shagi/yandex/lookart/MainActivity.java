@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getFragmentManager();
 
 
-        runSplash();
+       // runSplash();
         setUI();
     }
 
@@ -64,8 +64,11 @@ public class MainActivity extends AppCompatActivity {
         if (!preferenceHelper.getBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE)) {
             SplashFragment splashFragment = new SplashFragment();
             fragmentManager.beginTransaction()
-                    .replace(R.id.content_frame, splashFragment).addToBackStack(null).commit();
+                    .replace(R.id.content_frame, splashFragment)
+                    .addToBackStack(null)
+                    .commit();
         }
+
     }
 
     public void setUI() {
