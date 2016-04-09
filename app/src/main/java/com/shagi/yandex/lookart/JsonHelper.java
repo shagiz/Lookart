@@ -1,6 +1,7 @@
 package com.shagi.yandex.lookart;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.shagi.yandex.lookart.pojo.Artist;
 
@@ -17,7 +18,8 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 /**
- * Created by Shagi on 06.04.2016.
+ * Реализует парсинг ссылки на json объект и возвращает список элементов
+ * @author shagi
  */
 public class JsonHelper extends AsyncTask<Void,Void,List<Artist>>{
     public static final String url = "http://cache-default02f.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/artists.json";
@@ -29,15 +31,16 @@ public class JsonHelper extends AsyncTask<Void,Void,List<Artist>>{
         });
     }
 
-    public static String getDataByJavaIo() throws Exception {
+    public static String getDataByJavaIo() throws IOException {
         InputStream inputStream = null;
         BufferedReader reader = null;
         try {
             inputStream = new URL(url).openStream();
             reader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
             return readData(reader);
-        } catch (Exception e) {
-            throw e;
+        } catch (IOException e) {
+            Log.e("JsonHelper", e.getMessage());
+            return null;
         } finally {
             inputStream.close();
             reader.close();

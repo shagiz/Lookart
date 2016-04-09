@@ -12,9 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.shagi.yandex.lookart.DownloadImageTask;
 import com.shagi.yandex.lookart.R;
 import com.shagi.yandex.lookart.pojo.Artist;
+
 
 import java.util.List;
 
@@ -48,7 +50,10 @@ public class ListArtistAdapter extends RecyclerView.Adapter<ListArtistAdapter.Vi
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         Artist artist = artists.get(position);
-        new DownloadImageTask(holder.smallCover).execute(artist.getCover().getSmall());
+       // new DownloadImageTask(holder.smallCover).execute(artist.getCover().getSmall());
+
+        ImageLoader.getInstance().displayImage(artist.getCover().getSmall(), holder.smallCover);
+
         holder.artistName.setText(artist.getName());
         String style = "";
         for (String string : artist.getGenres()) {

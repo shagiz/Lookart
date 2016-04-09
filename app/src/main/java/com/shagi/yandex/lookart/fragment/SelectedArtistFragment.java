@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.shagi.yandex.lookart.DownloadImageTask;
 import com.shagi.yandex.lookart.R;
-import com.shagi.yandex.lookart.pojo.Artist;
+
+
 
 
 /**
@@ -51,7 +53,10 @@ public class SelectedArtistFragment extends ArtistFragment {
     }
 
     public void changeInfo(int position){
-        new DownloadImageTask(ivBigCover).execute(artists.get(position).getCover().getBig());
+        //new DownloadImageTask(ivBigCover).execute(artists.get(position).getCover().getBig());
+
+        ImageLoader.getInstance().displayImage(artists.get(position).getCover().getBig(), ivBigCover);
+
         String style = "";
         for (String string : artists.get(position).getGenres()) {
             style += string + " ";

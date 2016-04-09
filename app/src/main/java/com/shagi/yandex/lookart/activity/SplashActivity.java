@@ -15,9 +15,6 @@ import com.shagi.yandex.lookart.R;
  */
 public class SplashActivity extends Activity {
 
-    /** Duration of wait **/
-    private final int SPLASH_DISPLAY_LENGTH = 1000;
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle icicle) {
@@ -30,6 +27,8 @@ public class SplashActivity extends Activity {
 
         /* New Handler to start the Menu-Activity
          * and close this Splash-Screen after some seconds.*/
+            /* Duration of wait */
+            int SPLASH_DISPLAY_LENGTH = 1000;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

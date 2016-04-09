@@ -3,6 +3,7 @@ package com.shagi.yandex.lookart.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.shagi.yandex.lookart.JsonHelper;
 import com.shagi.yandex.lookart.MainActivity;
 import com.shagi.yandex.lookart.pojo.Artist;
@@ -15,9 +16,8 @@ import java.util.concurrent.ExecutionException;
  */
 public abstract class ArtistFragment extends Fragment {
 
-
     protected List<Artist> artists;
-    public MainActivity activity;
+    protected MainActivity activity;
 
     public ArtistFragment(){
 

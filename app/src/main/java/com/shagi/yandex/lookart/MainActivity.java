@@ -11,23 +11,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.shagi.yandex.lookart.adaptor.TabAdaptor;
-import com.shagi.yandex.lookart.fragment.ArtistFragment;
 import com.shagi.yandex.lookart.fragment.RecyclerArtistFragment;
 import com.shagi.yandex.lookart.fragment.SelectedArtistFragment;
 
-public class MainActivity extends AppCompatActivity implements RecyclerArtistFragment.OnArtistSelectedListener{
+public class MainActivity extends AppCompatActivity implements RecyclerArtistFragment.OnArtistSelectedListener {
 
-    FragmentManager fragmentManager;
-    PreferenceHelper preferenceHelper;
-    TabAdaptor tabAdaptor;
-    TabLayout tabLayout;
+    private FragmentManager fragmentManager;
+    private PreferenceHelper preferenceHelper;
+    private TabLayout tabLayout;
 
-    ArtistFragment artistFragment;
-    RecyclerArtistFragment recyclerArtistFragment;
-    SelectedArtistFragment selectedArtistFragment;
+    private SelectedArtistFragment selectedArtistFragment;
 
-    ViewPager viewPager;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +34,22 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         setContentView(R.layout.activity_main);
         preferenceHelper = PreferenceHelper.getInstance();
         fragmentManager = getFragmentManager();
+
+
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.img_loading)
+                .showImageForEmptyUri(R.drawable.img_not_found)
+                .resetViewBeforeLoading(true)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                .defaultDisplayImageOptions(options)
+                .build();
+
+        ImageLoader.getInstance().init(config);
+
 
         setUI();
     }
@@ -66,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         return super.onOptionsItemSelected(item);
     }
 
+
     public void setUI() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -78,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         tabLayout.addTab(tabLayout.newTab().setText(R.string.selected_artist_tab));
 
         viewPager = (ViewPager) findViewById(R.id.pager);
-        tabAdaptor = new TabAdaptor(fragmentManager, 2);
+        TabAdaptor tabAdaptor = new TabAdaptor(fragmentManager, 2);
 
         viewPager.setAdapter(tabAdaptor);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -105,10 +121,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
 
     @Override
     public void onArtistSelected(int position, boolean openInfoTab) {
-        tabLayout.getTabAt(1).setText(selectedArtistFragment.getArtists().get(position).getName());
+        String name = selectedArtistFragment.getArtists().get(position).getName();
+        tabLayout.getTabAt(1).setText(name);
+
         selectedArtistFragment.changeInfo(position);
         if (openInfoTab) {
             viewPager.setCurrentItem(1);
         }
     }
+
+
 }
