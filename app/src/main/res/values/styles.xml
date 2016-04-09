@@ -14,9 +14,5 @@
        <item name="android:src">@drawable/ic_settings_white_24dp</item>
     </style>
 
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
-
-    </style>
-
 
 </resources>

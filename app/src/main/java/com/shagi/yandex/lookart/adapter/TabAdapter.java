@@ -1,4 +1,4 @@
-package com.shagi.yandex.lookart.adaptor;
+package com.shagi.yandex.lookart.adapter;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -8,9 +8,10 @@ import com.shagi.yandex.lookart.fragment.RecyclerArtistFragment;
 import com.shagi.yandex.lookart.fragment.SelectedArtistFragment;
 
 /**
- * Created by Shagi on 06.04.2016.
+ * Создает фрагменты RecyclerArtistFragment и SelectedArtistFragment,
+ * возвращает их в зависимости от текущей позиции TabLayout.
  */
-public class TabAdaptor extends FragmentStatePagerAdapter {
+public class TabAdapter extends FragmentStatePagerAdapter {
 
     private int numberOfTabs;
 
@@ -20,7 +21,7 @@ public class TabAdaptor extends FragmentStatePagerAdapter {
     private RecyclerArtistFragment artistsFragment;
     private SelectedArtistFragment selectedArtistFragment;
 
-    public TabAdaptor(FragmentManager fm, int numberOfTabs) {
+    public TabAdapter(FragmentManager fm, int numberOfTabs) {
         super(fm);
         this.numberOfTabs = numberOfTabs;
         artistsFragment = new RecyclerArtistFragment();
@@ -30,9 +31,9 @@ public class TabAdaptor extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 0:
+            case ARTISTS_FRAGMENT_POSITION:
                 return artistsFragment;
-            case 1:
+            case SELECTED_ARTIST_POSITION:
                 return selectedArtistFragment;
             default:
                 return null;

@@ -8,26 +8,33 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.shagi.yandex.lookart.MainActivity;
 import com.shagi.yandex.lookart.R;
-import com.shagi.yandex.lookart.adaptor.ListArtistAdapter;
-import com.shagi.yandex.lookart.pojo.Artist;
+import com.shagi.yandex.lookart.adapter.ListArtistAdapter;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Инициализирует список исполнитлей
  */
-public class RecyclerArtistFragment extends ArtistFragment {
+public class RecyclerArtistFragment extends Fragment {
 
     OnArtistSelectedListener onArtistSelectedListener;
 
-    public interface OnArtistSelectedListener{
-        void onArtistSelected(int position,boolean openInfoTab);
+    /**
+     * Слушатель выобра исполнителя из списка
+     */
+    public interface OnArtistSelectedListener {
+        /**
+         * Слушает нажатие пунтка списка
+         *
+         * @param position    позиция исполнителя в списке
+         * @param openInfoTab значение определяет переход на другую табу
+         */
+        void onArtistSelected(int position, boolean openInfoTab);
     }
 
 
@@ -47,9 +54,7 @@ public class RecyclerArtistFragment extends ArtistFragment {
         rvArtists.setHasFixedSize(true);
         rvArtists.setItemAnimator(new DefaultItemAnimator());
 
-        artists = loadArtistModels();
-
-        final ListArtistAdapter artistAdapter = new ListArtistAdapter(artists);
+        final ListArtistAdapter artistAdapter = new ListArtistAdapter(((MainActivity) getActivity()).getArtists());
 
         rvArtists.setAdapter(artistAdapter);
 

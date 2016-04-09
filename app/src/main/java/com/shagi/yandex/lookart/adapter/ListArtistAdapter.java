@@ -1,4 +1,4 @@
-package com.shagi.yandex.lookart.adaptor;
+package com.shagi.yandex.lookart.adapter;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -10,10 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.shagi.yandex.lookart.DownloadImageTask;
 import com.shagi.yandex.lookart.R;
 import com.shagi.yandex.lookart.pojo.Artist;
 
@@ -21,7 +19,8 @@ import com.shagi.yandex.lookart.pojo.Artist;
 import java.util.List;
 
 /**
- * Created by Shagi on 06.04.2016.
+ * Получает элемент пункта списка из модели artist_list_model.xml
+ * Заполняет элемент данными
  */
 public class ListArtistAdapter extends RecyclerView.Adapter<ListArtistAdapter.ViewHolder> {
 
@@ -47,10 +46,7 @@ public class ListArtistAdapter extends RecyclerView.Adapter<ListArtistAdapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
         Artist artist = artists.get(position);
-       // new DownloadImageTask(holder.smallCover).execute(artist.getCover().getSmall());
 
         ImageLoader.getInstance().displayImage(artist.getCover().getSmall(), holder.smallCover);
 
@@ -89,9 +85,9 @@ public class ListArtistAdapter extends RecyclerView.Adapter<ListArtistAdapter.Vi
 
         @Override
         public void onClick(final View view) {
-           Log.d("TEST",getAdapterPosition()+" "+artistName.getText());
-            if (listener!=null){
-                ObjectAnimator flipIn = ObjectAnimator.ofFloat(smallCover,"rotationY",-180f,0f);
+
+            if (listener != null) {
+                ObjectAnimator flipIn = ObjectAnimator.ofFloat(smallCover, "rotationY", -180f, 0f);
                 flipIn.setDuration(750);
                 flipIn.addListener(new Animator.AnimatorListener() {
                     @Override
@@ -102,37 +98,37 @@ public class ListArtistAdapter extends RecyclerView.Adapter<ListArtistAdapter.Vi
                     @Override
                     public void onAnimationEnd(Animator animation) {
 
-                            ObjectAnimator translationX = ObjectAnimator.ofFloat(itemView,
-                                    "translationX", 0f, itemView.getWidth());
+                        ObjectAnimator translationX = ObjectAnimator.ofFloat(itemView,
+                                "translationX", 0f, itemView.getWidth());
 
-                            ObjectAnimator translationXBack = ObjectAnimator.ofFloat(itemView,
-                                    "translationX", itemView.getWidth(), 0f);
+                        ObjectAnimator translationXBack = ObjectAnimator.ofFloat(itemView,
+                                "translationX", itemView.getWidth(), 0f);
 
-                            translationX.addListener(new Animator.AnimatorListener() {
-                                @Override
-                                public void onAnimationStart(Animator animation) {
+                        translationX.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
 
-                                }
+                            }
 
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    listener.onItemClick(view,getAdapterPosition());
-                                }
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                listener.onItemClick(view, getAdapterPosition());
+                            }
 
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
 
-                                }
+                            }
 
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
 
-                                }
-                            });
+                            }
+                        });
 
-                            AnimatorSet translaitonSet = new AnimatorSet();
-                            translaitonSet.play(translationX).before(translationXBack);
-                            translaitonSet.start();
+                        AnimatorSet translaitonSet = new AnimatorSet();
+                        translaitonSet.play(translationX).before(translationXBack);
+                        translaitonSet.start();
 
                     }
 
@@ -153,7 +149,7 @@ public class ListArtistAdapter extends RecyclerView.Adapter<ListArtistAdapter.Vi
     }
 
     public interface OnItemClickListener {
-        public void onItemClick(View view , int position);
+        void onItemClick(View view, int position);
     }
 
     public void setOnItemClickListener(final OnItemClickListener listener) {

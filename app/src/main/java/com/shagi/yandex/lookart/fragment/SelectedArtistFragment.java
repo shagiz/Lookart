@@ -1,6 +1,7 @@
 package com.shagi.yandex.lookart.fragment;
 
 
+
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -11,16 +12,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.shagi.yandex.lookart.DownloadImageTask;
+import com.shagi.yandex.lookart.MainActivity;
 import com.shagi.yandex.lookart.R;
-
-
+import com.shagi.yandex.lookart.pojo.Artist;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Иницализирует и заполняет фрагмент выбранного исполнителя
  */
-public class SelectedArtistFragment extends ArtistFragment {
+public class SelectedArtistFragment extends Fragment {
 
     private ImageView ivBigCover;
     private TextView tvInfoStyle;
@@ -49,22 +49,31 @@ public class SelectedArtistFragment extends ArtistFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        activity.onArtistSelected(0,false);
+        // Установить значение 2 табы данными 1-ого элемента списка
+        ((MainActivity)getActivity()).onArtistSelected(0,false);
     }
 
+    /**
+     * Заполняет все View фрагмента данными выбранного исполнителя
+     *
+     * @param position Выбранный элемент списка исполнителей
+     */
     public void changeInfo(int position){
-        //new DownloadImageTask(ivBigCover).execute(artists.get(position).getCover().getBig());
-
-        ImageLoader.getInstance().displayImage(artists.get(position).getCover().getBig(), ivBigCover);
+        Artist artist = ((MainActivity)getActivity()).getArtists().get(position);
+        ImageLoader.getInstance().displayImage(artist.getCover().getBig(), ivBigCover);
 
         String style = "";
-        for (String string : artists.get(position).getGenres()) {
+        for (String string : artist.getGenres()) {
             style += string + " ";
         }
         tvInfoStyle.setText(style);
-        String albums = "альбомов " + artists.get(position).getAlbums() + ", треков " + artists.get(position).getTracks();
+        String albums = "альбомов " + artist.getAlbums() + ", треков " + artist.getTracks();
         tvInfoAlbums.setText(albums);
-        tvInfo.setText(artists.get(position).getDescription());
+        if (artist.getLink()!=null){
+            tvInfo.setText(artist.getLink()+"\n\n"+artist.getDescription());
+        }else {
+            tvInfo.setText(artist.getDescription());
+        }
     }
 
 }
