@@ -4,6 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.shagi.yandex.lookart.MainActivity;
+import com.shagi.yandex.lookart.pojo.Artist;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,115 +17,96 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Shagi on 09.04.2016.
+ * Обеспечивает работу с файловой системой
+ * @author Shagi
  */
-public class CacheHelper extends AsyncTask<Void, Void, Void> {
+public class CacheHelper {
 
     private Context context;
 
     private static final String FILENAME = "lookart_cache";
-    private static final String FILENAME_SD = "lookart_cache_sd";
-    private static final String DIR_SD = "LookArt";
+
     private static final String LOG_TAG = "LookArt";
 
+    private static CacheHelper instance;
 
-    public CacheHelper(Context context) {
+    private CacheHelper(Context context) {
         this.context = context;
     }
 
-    private void writeFile() {
-        try {
-            // отрываем поток для записи
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(FILENAME, Context.MODE_PRIVATE)));
-            // пишем данные
-            bw.write("Содержимое файла");
-            // закрываем поток
-            bw.close();
-            Log.d(LOG_TAG, "Файл записан");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static CacheHelper getInstance(Context context) {
+        if (instance == null) {
+            instance = new CacheHelper(context);
         }
+        return instance;
     }
 
-    private void readFile() {
-        try {
-            // открываем поток для чтения
-            BufferedReader br = new BufferedReader(new InputStreamReader(context.openFileInput(FILENAME)));
-            String str = "";
-            // читаем содержимое
-            while ((str = br.readLine()) != null) {
-                Log.d(LOG_TAG, str);
+    public boolean download() throws ExecutionException, InterruptedException {
+        return new CacheWriter().execute().get();
+    }
+
+    public List<Artist> upload() {
+        return new CacheReader().readFile();
+    }
+
+    /**
+     * Удаляет файл кэша
+     */
+    public void clean() {
+        File dir = context.getFilesDir();
+        File file = new File(dir, FILENAME);
+        boolean deleted = file.delete();
+        Log.d(LOG_TAG, "Файл удален");
+    }
+
+    /**
+     * Сохраняет данные из интернета
+     */
+    class CacheWriter extends AsyncTask<Void, Void, Boolean> {
+
+        private boolean writeFile() {
+            try {
+                final ObjectOutputStream objectOutputStream = new ObjectOutputStream((context.openFileOutput(FILENAME, Context.MODE_PRIVATE)));
+                objectOutputStream.writeObject(((MainActivity) context).getArtists());
+                objectOutputStream.flush();
+                objectOutputStream.close();
+                Log.d(LOG_TAG, "Файл записан");
+                return true;
+            } catch (IOException e) {
+                Log.e(LOG_TAG, e.getMessage());
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return false;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return writeFile();
         }
     }
 
-    private void writeFileSD() {
-        // проверяем доступность SD
-        if (!Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {
-            Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
-            return;
-        }
-        // получаем путь к SD
-        File sdPath = Environment.getExternalStorageDirectory();
-        // добавляем свой каталог к пути
-        sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);
-        // создаем каталог
-        sdPath.mkdirs();
-        // формируем объект File, который содержит путь к файлу
-        File sdFile = new File(sdPath, FILENAME_SD);
-        try {
-            // открываем поток для записи
-            BufferedWriter bw = new BufferedWriter(new FileWriter(sdFile));
-            // пишем данные
-            bw.write("Содержимое файла на SD");
-            // закрываем поток
-            bw.close();
-            Log.d(LOG_TAG, "Файл записан на SD: " + sdFile.getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void readFileSD() {
-        // проверяем доступность SD
-        if (!Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {
-            Log.d(LOG_TAG, "SD-карта не доступна: " + Environment.getExternalStorageState());
-            return;
-        }
-        // получаем путь к SD
-        File sdPath = Environment.getExternalStorageDirectory();
-        // добавляем свой каталог к пути
-        sdPath = new File(sdPath.getAbsolutePath() + "/" + DIR_SD);
-        // формируем объект File, который содержит путь к файлу
-        File sdFile = new File(sdPath, FILENAME_SD);
-        try {
-            // открываем поток для чтения
-            BufferedReader br = new BufferedReader(new FileReader(sdFile));
-            String str = "";
-            // читаем содержимое
-            while ((str = br.readLine()) != null) {
-                Log.d(LOG_TAG, str);
+    /**
+     * Загружает данные при отсутсвии интернета
+     */
+    class CacheReader {
+        private List<Artist> readFile() {
+            try {
+                // открываем поток для чтения
+                final ObjectInputStream objectInputStream = new ObjectInputStream((context.openFileInput(FILENAME)));
+                List<Artist> artists = (List<Artist>) objectInputStream.readObject();
+                objectInputStream.close();
+                return artists;
+            } catch (IOException | ClassNotFoundException e) {
+                Log.e(LOG_TAG, e.getMessage());
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return new ArrayList<>();
         }
-    }
-
-    @Override
-    protected Void doInBackground(Void... params) {
-        return null;
     }
 }

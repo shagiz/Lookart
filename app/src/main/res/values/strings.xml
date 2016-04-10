@@ -8,5 +8,8 @@
     <string name="selected_artist_tab">Подробно</string>
     <string name="splash_activity">splash_activity</string>
     <string name="description">Описание</string>
+    <string name="do_not_ask_again">Don\'t ask again</string>
+    <string name="clean_cache">Clean cache</string>
+    <string name="cover">Обложка</string>
 
 </resources>

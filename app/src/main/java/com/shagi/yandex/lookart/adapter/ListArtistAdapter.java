@@ -65,7 +65,10 @@ public class ListArtistAdapter extends RecyclerView.Adapter<ListArtistAdapter.Vi
         return artists.size();
     }
 
-
+    /**
+     * В этом классе каждому элементу списка устанавливаем слушатели на касание
+     * и добавляем анимацию перехода на другую вкладку.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public ImageView smallCover;

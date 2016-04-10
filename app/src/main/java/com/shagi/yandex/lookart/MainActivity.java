@@ -2,15 +2,18 @@ package com.shagi.yandex.lookart;
 
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,11 +24,14 @@ import com.shagi.yandex.lookart.adapter.TabAdapter;
 import com.shagi.yandex.lookart.fragment.RecyclerArtistFragment;
 import com.shagi.yandex.lookart.fragment.SelectedArtistFragment;
 import com.shagi.yandex.lookart.pojo.Artist;
+import com.shagi.yandex.lookart.util.CacheHelper;
 import com.shagi.yandex.lookart.util.JsonHelper;
 import com.shagi.yandex.lookart.util.PreferenceHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author shagi
@@ -48,6 +54,13 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
 
     private List<Artist> artists;
 
+    private static final String LOG_TAG = "LookArt";
+    /**
+     * Вспогательное поле класса для работы с файловой системой
+     * @see CacheHelper
+     */
+    private CacheHelper cacheHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,15 +71,26 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
 
         initUniversalImageLoader();
 
-        //TODO : Откуда загружаем данные
-        if (hasConnection(this)){
-            artists=loadArtistFromJson();
-        }else {
-            artists=loadArtistFromCache();
+        cacheHelper = CacheHelper.getInstance(this);
+
+        if (hasConnection(this)) {
+            artists = loadArtistFromJson();
+
+            if (!preferenceHelper.getBoolean(PreferenceHelper.DO_NOT_ASC_AGAIN)) {
+                saveCacheAlertDialog();
+            }
+
+            // Сохранять данные при наличии интернета
+            if (preferenceHelper.getBoolean(PreferenceHelper.CACHE_DOWNLOAD_ACCEPTED)) {
+                downloadCache();
+            }
+        } else {
+            artists = loadArtistFromCache();
         }
 
         setUI();
     }
+
 
     /**
      * Инициализирует объект ImageLoader из библиотеки UniversalImageLoader
@@ -89,6 +113,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         ImageLoader.getInstance().init(config);
     }
 
+    /**
+     * Проверяем наличие интернет соединения
+     */
     public static boolean hasConnection(final Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -111,8 +138,12 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         MenuItem splashItem = menu.findItem(R.id.action_splash);
         splashItem.setChecked(preferenceHelper.getBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE));
+
+        MenuItem ask_cache = menu.findItem(R.id.do_not_ask_again);
+        ask_cache.setChecked(preferenceHelper.getBoolean(PreferenceHelper.DO_NOT_ASC_AGAIN));
         return true;
     }
 
@@ -124,6 +155,17 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
             item.setChecked(!item.isChecked());
             preferenceHelper.putBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE, item.isChecked());
             return true;
+        }
+
+        if (id == R.id.do_not_ask_again) {
+            item.setChecked(!item.isChecked());
+            preferenceHelper.putBoolean(PreferenceHelper.DO_NOT_ASC_AGAIN, item.isChecked());
+        }
+
+        if (id == R.id.clean_cache) {
+            preferenceHelper.putBoolean(PreferenceHelper.DO_NOT_ASC_AGAIN, false);
+            preferenceHelper.putBoolean(PreferenceHelper.CACHE_DOWNLOAD_ACCEPTED, false);
+            cacheHelper.clean();
         }
 
         return super.onOptionsItemSelected(item);
@@ -190,22 +232,65 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
     /**
      * Получает список обектов Artist из JSON по URL
      */
-    protected List<Artist> loadArtistFromJson() {
+    private List<Artist> loadArtistFromJson() {
         try {
             return new JsonHelper().execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
+            Log.e(LOG_TAG, e.getMessage());
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
     /**
      * Получает список обектов Artist из файловой системы
      */
-    protected List<Artist> loadArtistFromCache() {
-        //TODO
-        return null;
+    private List<Artist> loadArtistFromCache() {
+        return cacheHelper.upload();
+    }
+
+    /**
+     * Скачивает данные в файловую систему
+     */
+    private void downloadCache() {
+        try {
+            cacheHelper.download();
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e(LOG_TAG, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Показывает AlertDialog с выбором сохрания кэша
+     */
+    public void saveCacheAlertDialog() {
+        AlertDialog.Builder ad = new AlertDialog.Builder(this);
+
+        ad.setTitle("Первый запуск");
+        ad.setMessage("Сохранять данные при наличии интернета?\n" +
+                "Для экономии трафика и места изображения сохранены не будут."); // сообщение
+        ad.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int arg1) {
+                preferenceHelper.putBoolean(PreferenceHelper.CACHE_DOWNLOAD_ACCEPTED, true);
+                preferenceHelper.putBoolean(PreferenceHelper.DO_NOT_ASC_AGAIN, true);
+                try {
+                    cacheHelper.download();
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+        ad.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int arg1) {
+                preferenceHelper.putBoolean(PreferenceHelper.DO_NOT_ASC_AGAIN, true);
+                cacheHelper.clean();
+            }
+        });
+        ad.setCancelable(false);
+        AlertDialog alertDialog = ad.create();
+        alertDialog.show();
     }
 }

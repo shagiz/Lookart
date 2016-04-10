@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
  */
 public class PreferenceHelper {
     public static final String SPLASH_IS_INVISIBLE = "splash_is_invisible";
+    public static final String CACHE_DOWNLOAD_ACCEPTED = "cache_download_accepted";
+    public static final String DO_NOT_ASC_AGAIN = "do_not_asc_again";
 
     private static PreferenceHelper instance;
     private SharedPreferences sharedPreferences;

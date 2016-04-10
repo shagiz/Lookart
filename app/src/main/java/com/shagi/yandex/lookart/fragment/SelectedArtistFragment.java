@@ -4,6 +4,7 @@ package com.shagi.yandex.lookart.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ public class SelectedArtistFragment extends Fragment {
 
     private ImageView ivBigCover;
     private TextView tvInfoStyle;
+    private TextView tvOneWord;
     private TextView tvInfoAlbums;
     private TextView tvInfo;
 
@@ -39,6 +41,7 @@ public class SelectedArtistFragment extends Fragment {
         ivBigCover = (ImageView) rootView.findViewById(R.id.bigCover);
         tvInfoStyle = (TextView) rootView.findViewById(R.id.tvInfoStyle);
         tvInfoAlbums = (TextView) rootView.findViewById(R.id.tvInfoAlbums);
+        tvOneWord = (TextView) rootView.findViewById(R.id.oneWord);
         tvInfo = (TextView) rootView.findViewById(R.id.tvInfo);
         tvInfo.setMovementMethod(new ScrollingMovementMethod());
 
@@ -50,7 +53,20 @@ public class SelectedArtistFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Установить значение 2 табы данными 1-ого элемента списка
-        ((MainActivity)getActivity()).onArtistSelected(0,false);
+        // Если данных нет показывает AlertDialog
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity.getArtists()==null || activity.getArtists().size()==0){
+            tvOneWord.setText("");
+            AlertDialog alertDialog = new AlertDialog.Builder(activity)
+                    .setTitle("Данные отсутствуют")
+                    .setMessage("Что бы приложение могло получить данные и сохранить их в кэш, " +
+                            " требуется наличие интернет соединения.")
+                    .create();
+            alertDialog.show();
+
+        }else {
+            activity.onArtistSelected(0, false);
+        }
     }
 
     /**

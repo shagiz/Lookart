@@ -1,9 +1,13 @@
 package com.shagi.yandex.lookart.pojo;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
 /**
- * Created by Shagi on 06.04.2016.
+ * POJO
+ * @author Shagi
  */
-public class Artist {
+public class Artist implements Serializable{
     private String id;
 
     private Cover cover;
@@ -86,6 +90,33 @@ public class Artist {
 
     @Override
     public String toString() {
-        return "ClassPojo [id = " + id + ", cover = " + cover + ", genres = " + genres + ", description = " + description + ", link = " + link + ", albums = " + albums + ", name = " + name + ", tracks = " + tracks + "]";
+        return "ClassPojo [id = " + id + ", cover = " + cover + ", genres = " + Arrays.toString(genres) + ", description = " + description + ", link = " + link + ", albums = " + albums + ", name = " + name + ", tracks = " + tracks + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Artist artist = (Artist) o;
+
+        if (id != null ? !id.equals(artist.id) : artist.id != null) return false;
+        if (cover != null ? !cover.equals(artist.cover) : artist.cover != null) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(genres, artist.genres) && (description != null ? description.equals(artist.description) : artist.description == null && (link != null ? link.equals(artist.link) : artist.link == null && (albums != null ? albums.equals(artist.albums) : artist.albums == null && (name != null ? name.equals(artist.name) : artist.name == null && (tracks != null ? tracks.equals(artist.tracks) : artist.tracks == null)))));
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (cover != null ? cover.hashCode() : 0);
+        result = 31 * result + Arrays.hashCode(genres);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (link != null ? link.hashCode() : 0);
+        result = 31 * result + (albums != null ? albums.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (tracks != null ? tracks.hashCode() : 0);
+        return result;
     }
 }
