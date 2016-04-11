@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class JsonHelper extends AsyncTask<Void,Void,List<Artist>>{
     public static final String url = "http://cache-default02f.cdn.yandex.net/download.cdn.yandex.net/mobilization-2016/artists.json";
-
+    public static final String TAG = "LookArt";
     /**
      * Конвертирует JSON в JAVA POJO с помощью библиотеки Jackson
      * @return Список pojo объектов json
@@ -48,11 +48,15 @@ public class JsonHelper extends AsyncTask<Void,Void,List<Artist>>{
             reader = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
             return readData(reader);
         } catch (IOException e) {
-            Log.e("JsonHelper", e.getMessage());
+            Log.e(TAG, "Ошибка чтения данных",e);
             return null;
         } finally {
-            inputStream.close();
-            reader.close();
+            if (inputStream!=null) {
+                inputStream.close();
+            }
+            if (reader!=null) {
+                reader.close();
+            }
         }
     }
 
@@ -71,7 +75,7 @@ public class JsonHelper extends AsyncTask<Void,Void,List<Artist>>{
         try {
             return jsonToJavaObject();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG,"Ошибка исполнения Json",e);
         }
         return null;
     }

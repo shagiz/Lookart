@@ -216,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
     @Override
     public void onArtistSelected(int position, boolean openInfoTab) {
         String name = getArtists().get(position).getName();
+
         tabLayout.getTabAt(1).setText(name);
 
         selectedArtistFragment.changeInfo(position);
@@ -236,8 +237,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         try {
             return new JsonHelper().execute().get();
         } catch (InterruptedException | ExecutionException e) {
-            Log.e(LOG_TAG, e.getMessage());
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.getMessage(), e);
         }
         return new ArrayList<>();
     }
@@ -256,8 +256,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         try {
             cacheHelper.download();
         } catch (ExecutionException | InterruptedException e) {
-            Log.e(LOG_TAG, e.getMessage());
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.getMessage(),e);
         }
     }
 

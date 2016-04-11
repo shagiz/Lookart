@@ -81,7 +81,7 @@ public class CacheHelper {
                 Log.d(LOG_TAG, "Файл записан");
                 return true;
             } catch (IOException e) {
-                Log.e(LOG_TAG, e.getMessage());
+                Log.e(LOG_TAG, e.getMessage(),e);
             }
             return false;
         }
@@ -104,7 +104,7 @@ public class CacheHelper {
                 objectInputStream.close();
                 return artists;
             } catch (IOException | ClassNotFoundException e) {
-                Log.e(LOG_TAG, e.getMessage());
+                Log.e(LOG_TAG, e.getMessage(),e);
             }
             return new ArrayList<>();
         }
