@@ -28,6 +28,7 @@ public class SelectedArtistFragment extends Fragment {
     private TextView tvOneWord;
     private TextView tvInfoAlbums;
     private TextView tvInfo;
+    private MainActivity activity;
 
     public SelectedArtistFragment() {
         // Required empty public constructor
@@ -54,7 +55,7 @@ public class SelectedArtistFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         // Установить значение 2 табы данными 1-ого элемента списка
         // Если данных нет показывает AlertDialog
-        MainActivity activity = (MainActivity) getActivity();
+        activity = (MainActivity) getActivity();
         if (activity.getArtists()==null || activity.getArtists().size()==0){
             tvOneWord.setText("");
             AlertDialog alertDialog = new AlertDialog.Builder(activity)
@@ -75,7 +76,7 @@ public class SelectedArtistFragment extends Fragment {
      * @param position Выбранный элемент списка исполнителей
      */
     public void changeInfo(int position){
-        Artist artist = ((MainActivity)getActivity()).getArtists().get(position);
+        Artist artist = activity.getArtists().get(position);
         ImageLoader.getInstance().displayImage(artist.getCover().getBig(), ivBigCover);
 
         String style = "";

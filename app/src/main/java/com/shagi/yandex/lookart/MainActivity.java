@@ -23,6 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.shagi.yandex.lookart.adapter.TabAdapter;
 import com.shagi.yandex.lookart.fragment.RecyclerArtistFragment;
 import com.shagi.yandex.lookart.fragment.SelectedArtistFragment;
+import com.shagi.yandex.lookart.fragment.SplashFragment;
 import com.shagi.yandex.lookart.pojo.Artist;
 import com.shagi.yandex.lookart.util.CacheHelper;
 import com.shagi.yandex.lookart.util.JsonHelper;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
     private static final String LOG_TAG = "LookArt";
     /**
      * Вспогательное поле класса для работы с файловой системой
+     *
      * @see CacheHelper
      */
     private CacheHelper cacheHelper;
@@ -66,8 +68,13 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        PreferenceHelper.getInstance().init(getApplicationContext());
+
         preferenceHelper = PreferenceHelper.getInstance();
         fragmentManager = getFragmentManager();
+
+        runSplash();
+
 
         initUniversalImageLoader();
 
@@ -132,6 +139,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
             return false;
         }
         return false;
+    }
+
+    public void runSplash() {
+        if (!preferenceHelper.getBoolean(PreferenceHelper.SPLASH_IS_INVISIBLE)) {
+            SplashFragment splashFragment = new SplashFragment();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.content_frame, splashFragment).addToBackStack(null).commit();
+        }
     }
 
     @Override
@@ -256,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         try {
             cacheHelper.download();
         } catch (ExecutionException | InterruptedException e) {
-            Log.e(LOG_TAG, e.getMessage(),e);
+            Log.e(LOG_TAG, e.getMessage(), e);
         }
     }
 
