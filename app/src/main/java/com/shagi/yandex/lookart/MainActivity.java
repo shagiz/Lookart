@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
 
     private TabLayout tabLayout;
 
+    private TabAdapter tabAdapter;
+
     private SelectedArtistFragment selectedArtistFragment;
 
     private ViewPager viewPager;
@@ -72,8 +74,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
 
         preferenceHelper = PreferenceHelper.getInstance();
         fragmentManager = getFragmentManager();
-
-        runSplash();
+        if (savedInstanceState == null) {
+            runSplash();
+        }
 
 
         initUniversalImageLoader();
@@ -199,9 +202,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         tabLayout.addTab(tabLayout.newTab().setText(R.string.selected_artist_tab));
 
         viewPager = (ViewPager) findViewById(R.id.pager);
-        TabAdapter tabAdaptor = new TabAdapter(fragmentManager, 2);
+        tabAdapter = new TabAdapter(fragmentManager, 2);
 
-        viewPager.setAdapter(tabAdaptor);
+        viewPager.setAdapter(tabAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -221,7 +224,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
             }
         });
 
-        selectedArtistFragment = (SelectedArtistFragment) tabAdaptor.getItem(TabAdapter.SELECTED_ARTIST_POSITION);
     }
 
 
@@ -233,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         String name = getArtists().get(position).getName();
 
         tabLayout.getTabAt(1).setText(name);
-
+        selectedArtistFragment = (SelectedArtistFragment) fragmentManager.findFragmentById(R.id.pager);
         selectedArtistFragment.changeInfo(position);
         if (openInfoTab) {
             viewPager.setCurrentItem(1);
@@ -307,4 +309,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         AlertDialog alertDialog = ad.create();
         alertDialog.show();
     }
+
+    public TabLayout getTabLayout(){return tabLayout;}
+
+    public ViewPager getViewPager(){return viewPager;}
 }

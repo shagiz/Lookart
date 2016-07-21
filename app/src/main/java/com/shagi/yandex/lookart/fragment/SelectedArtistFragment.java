@@ -29,6 +29,7 @@ public class SelectedArtistFragment extends Fragment {
     private TextView tvInfoAlbums;
     private TextView tvInfo;
     private MainActivity activity;
+    private int currentPosition;
 
     public SelectedArtistFragment() {
         // Required empty public constructor
@@ -66,7 +67,11 @@ public class SelectedArtistFragment extends Fragment {
             alertDialog.show();
 
         }else {
-            activity.onArtistSelected(0, false);
+            if (savedInstanceState == null) {
+                activity.onArtistSelected(0, false);
+            }else {
+                activity.onArtistSelected(savedInstanceState.getInt("position"),false);
+            }
         }
     }
 
@@ -76,6 +81,7 @@ public class SelectedArtistFragment extends Fragment {
      * @param position Выбранный элемент списка исполнителей
      */
     public void changeInfo(int position){
+        currentPosition = position;
         Artist artist = activity.getArtists().get(position);
         ImageLoader.getInstance().displayImage(artist.getCover().getBig(), ivBigCover);
 
@@ -93,4 +99,9 @@ public class SelectedArtistFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("position", currentPosition);
+    }
 }

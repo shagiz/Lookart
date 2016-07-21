@@ -64,7 +64,7 @@ public class CacheHelper {
         File dir = context.getFilesDir();
         File file = new File(dir, FILENAME);
         boolean deleted = file.delete();
-        Log.d(LOG_TAG, "Файл удален");
+       // Log.d(LOG_TAG, "Файл удален");
     }
 
     /**
@@ -78,7 +78,7 @@ public class CacheHelper {
                 objectOutputStream.writeObject(((MainActivity) context).getArtists());
                 objectOutputStream.flush();
                 objectOutputStream.close();
-                Log.d(LOG_TAG, "Файл записан");
+                //Log.d(LOG_TAG, "Файл записан");
                 return true;
             } catch (IOException e) {
                 Log.e(LOG_TAG, e.getMessage(),e);

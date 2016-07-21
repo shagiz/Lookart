@@ -18,23 +18,18 @@ public class TabAdapter extends FragmentStatePagerAdapter {
     public static final int ARTISTS_FRAGMENT_POSITION = 0;
     public static final int SELECTED_ARTIST_POSITION = 1;
 
-    private RecyclerArtistFragment artistsFragment;
-    private SelectedArtistFragment selectedArtistFragment;
-
     public TabAdapter(FragmentManager fm, int numberOfTabs) {
         super(fm);
         this.numberOfTabs = numberOfTabs;
-        artistsFragment = new RecyclerArtistFragment();
-        selectedArtistFragment = new SelectedArtistFragment();
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position) {
             case ARTISTS_FRAGMENT_POSITION:
-                return artistsFragment;
+                return new RecyclerArtistFragment();
             case SELECTED_ARTIST_POSITION:
-                return selectedArtistFragment;
+                return new SelectedArtistFragment();
             default:
                 return null;
         }
