@@ -17,6 +17,12 @@
         android:checkable="true"
         />
     <item
+        android:id="@+id/feedback"
+        android:orderInCategory="3"
+        android:title="@string/feedback"
+        app:showAsAction="never"
+        />
+    <item
         android:id="@+id/clean_cache"
         android:orderInCategory="1"
         android:title="@string/clean_cache"

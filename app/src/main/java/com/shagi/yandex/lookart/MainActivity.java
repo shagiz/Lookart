@@ -3,6 +3,7 @@ package com.shagi.yandex.lookart;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -186,6 +187,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
             cacheHelper.clean();
         }
 
+        if (id == R.id.feedback) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("message/rfc822");
+            intent.putExtra(Intent.EXTRA_EMAIL  , new String[]{"javashagi@yandex.ru"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Re: LookArt");
+            intent.putExtra(Intent.EXTRA_TEXT   , "LookArt YAPP");
+
+            startActivity(Intent.createChooser(intent, "Send mail..."));
+        }
         return super.onOptionsItemSelected(item);
     }
 
