@@ -206,12 +206,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
             Intent intent = new Intent(Intent.ACTION_SENDTO,
                     Uri.fromParts("mailto", "javashagi@yandex.ru", null));
             intent.putExtra(Intent.EXTRA_EMAIL, "javashagi@yandex.ru");
-
-            startActivity(intent);
             intent.putExtra(Intent.EXTRA_SUBJECT, "Re: LookArt");
             intent.putExtra(Intent.EXTRA_TEXT, "LookArt YAPP");
 
-            startActivity(Intent.createChooser(intent, null));
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
