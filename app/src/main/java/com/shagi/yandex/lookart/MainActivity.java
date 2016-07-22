@@ -1,11 +1,14 @@
 package com.shagi.yandex.lookart;
 
 import android.app.FragmentManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -17,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -26,6 +30,7 @@ import com.shagi.yandex.lookart.fragment.RecyclerArtistFragment;
 import com.shagi.yandex.lookart.fragment.SelectedArtistFragment;
 import com.shagi.yandex.lookart.fragment.SplashFragment;
 import com.shagi.yandex.lookart.pojo.Artist;
+import com.shagi.yandex.lookart.receivers.HeadPhoneReceiver;
 import com.shagi.yandex.lookart.util.CacheHelper;
 import com.shagi.yandex.lookart.util.JsonHelper;
 import com.shagi.yandex.lookart.util.PreferenceHelper;
@@ -33,7 +38,6 @@ import com.shagi.yandex.lookart.util.PreferenceHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author shagi
@@ -50,10 +54,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
 
     private TabLayout tabLayout;
 
-    private TabAdapter tabAdapter;
-
-    private SelectedArtistFragment selectedArtistFragment;
-
     private ViewPager viewPager;
 
     private List<Artist> artists;
@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
      * @see CacheHelper
      */
     private CacheHelper cacheHelper;
+
+    private HeadPhoneReceiver mHeadPhoneReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
             runSplash();
         }
 
+        mHeadPhoneReceiver = new HeadPhoneReceiver();
 
         initUniversalImageLoader();
 
@@ -102,6 +105,18 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         setUI();
     }
 
+    @Override
+    protected void onResume() {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(mHeadPhoneReceiver, filter);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(mHeadPhoneReceiver);
+        super.onPause();
+    }
 
     /**
      * Инициализирует объект ImageLoader из библиотеки UniversalImageLoader
@@ -188,13 +203,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         }
 
         if (id == R.id.feedback) {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("message/rfc822");
-            intent.putExtra(Intent.EXTRA_EMAIL  , new String[]{"javashagi@yandex.ru"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Re: LookArt");
-            intent.putExtra(Intent.EXTRA_TEXT   , "LookArt YAPP");
+            Intent intent = new Intent(Intent.ACTION_SENDTO,
+                    Uri.fromParts("mailto", "javashagi@yandex.ru", null));
+            intent.putExtra(Intent.EXTRA_EMAIL, "javashagi@yandex.ru");
 
-            startActivity(Intent.createChooser(intent, "Send mail..."));
+            startActivity(intent);
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Re: LookArt");
+            intent.putExtra(Intent.EXTRA_TEXT, "LookArt YAPP");
+
+            startActivity(Intent.createChooser(intent, null));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -212,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         tabLayout.addTab(tabLayout.newTab().setText(R.string.selected_artist_tab));
 
         viewPager = (ViewPager) findViewById(R.id.pager);
-        tabAdapter = new TabAdapter(fragmentManager, 2);
+        TabAdapter tabAdapter = new TabAdapter(fragmentManager, 2);
 
         viewPager.setAdapter(tabAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -245,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         String name = getArtists().get(position).getName();
 
         tabLayout.getTabAt(1).setText(name);
-        selectedArtistFragment = (SelectedArtistFragment) fragmentManager.findFragmentById(R.id.pager);
+        SelectedArtistFragment selectedArtistFragment = (SelectedArtistFragment) fragmentManager.findFragmentById(R.id.pager);
         selectedArtistFragment.changeInfo(position);
         if (openInfoTab) {
             viewPager.setCurrentItem(1);
@@ -319,8 +336,4 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
         AlertDialog alertDialog = ad.create();
         alertDialog.show();
     }
-
-    public TabLayout getTabLayout(){return tabLayout;}
-
-    public ViewPager getViewPager(){return viewPager;}
 }
