@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
 
         mHeadPhoneReceiver = new HeadPhoneReceiver();
 
-
         initUniversalImageLoader();
 
         cacheHelper = CacheHelper.getInstance(this);
