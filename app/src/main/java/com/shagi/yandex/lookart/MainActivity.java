@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerArtistFra
             runSplash();
         }
 
-
         mHeadPhoneReceiver = new HeadPhoneReceiver();
 
         initUniversalImageLoader();
